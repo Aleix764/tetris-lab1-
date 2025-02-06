@@ -149,65 +149,52 @@ int remove_completed_lines(char board[MAX_ROWS][MAX_COLUMNS]){
 
 void init_game_state(GameState *game_state){
 
-    for(int i=0;i<MAX_ROWS;i++){
-        for(int j=0;j<MAX_COLUMNS;j++){
-            if(game_state->board[i][j]==0){
-                game_state->board[i][j]= '.';
-            }
+for(int i = 0; i < MAX_ROWS; i++){
+        for(int j = 0; j < MAX_COLUMNS; j++){
+            game_state->board[i][j] = '.';
         }
     }
-
-    get_new_random_piece(game_state);
     game_state->score = 0;
+    get_new_random_piece(game_state);
 }
 
 
 bool is_terminal(char board[MAX_ROWS][MAX_COLUMNS]){
-     for(int i=0;i<MAX_ROWS;i++){
-        for(int j=0;j<MAX_COLUMNS;j++){
-            if(board[i][j]=='X'){
+      for(int i = 0; i < 4; i++){
+        for(int j = 0; j < MAX_COLUMNS; j++){
+            if(board[i][j] == 'X'){
                 return true;
             }
         }
-     }
+    }
     return false;
 }
 
 
 void move_piece(char board[MAX_ROWS][MAX_COLUMNS], PieceInfo *piece_info, int option){
-    if (option == 1){
-        if (!is_collision(board, piece_info)){
-            piece_info->at_col -= 1;
-        }
-    }
-    else if( option == 2){
-        if (!is_collision(board, piece_info)){
-            piece_info->at_col += 1;
-        }
+    
+    int new_col = piece_info->at_col + (option == MOVE_RIGHT) - (option == MOVE_LEFT);
+    
+    PieceInfo temp_piece = *piece_info;
+    temp_piece.at_col = new_col;
+    
+    if (!is_collision(board, &temp_piece)) {
+        piece_info->at_col = new_col;
     }
 }
 
 void rotate_piece(char board[MAX_ROWS][MAX_COLUMNS], PieceInfo *piece_info, int option){
 
-    int lines = 0;
-    bool completed_line;
-    for(int r=4; r<MAX_ROWS; ++r){
-        completed_line = true;
-        for(int c=0; c<MAX_COLUMNS; ++c){
-            if(board[r][c] != 'X'){
-                completed_line = false; 
-                break;
-            }
-        }
-        if(completed_line){
-            ++lines;
-            // Totes les linies de damunt les movem un cop cap avall.
-            for(int r2=r; r2>3; --r2){
-                for(int c=0; c<MAX_COLUMNS; ++c){
-                    board[r2][c] = board[r2-1][c];
-                }
-            }
-        }
+    Piece temp_piece = piece_info->p;
+    
+    if (option == ROTATE_CW) {
+        rotate_clockwise(&temp_piece);
+    } else if (option == ROTATE_CCW) {
+        rotate_counter_clockwise(&temp_piece);
+    }
+    
+    if (!is_collision(board, &(PieceInfo){temp_piece, piece_info->at_row, piece_info->at_col})) {
+        piece_info->p = temp_piece;
     }
 }
 /********************************************************/
