@@ -23,7 +23,7 @@ bool is_valid_option(int option){
 }
 
 
-void print_line(){
+void print_line(int columns){
     for(int c=-1; c<columns+1; ++c) 
     	printf("-");    
     printf("\n");
@@ -35,11 +35,11 @@ void print_board(GameState *game_state){
     int p_col_size = piece->cols;
     int current_row = game_state->current_piece.at_row;
     int current_col = game_state->current_piece.at_col;
-    print_line();
-    for(int r = 0; r < rows; ++r){
-        if(r == 4) print_line();
+    print_line(game_state->columns);
+    for(int r = 0; r < game_state->rows; ++r){
+        if(r == 4) print_line(game_state->columns);
         printf("|");
-        for(int c=0; c < columns; ++c){
+        for(int c=0; c < game_state->columns; ++c){
             if((game_state->board[r][c] == '.') &&
                (current_row <= r) && (r < current_row + p_row_size) && 
                (current_col <= c) && (c < current_col + p_col_size)){
@@ -49,7 +49,7 @@ void print_board(GameState *game_state){
         }
         printf("|\n");
     }
-    print_line();
+    print_line(game_state->columns);
     printf("\n");
 }
 
@@ -104,7 +104,7 @@ void get_new_random_piece(GameState *game_state){
 
     // Random location
     game_state->current_piece.at_row = 4 - game_state->current_piece.p.rows;
-    game_state->current_piece.at_col = rand() % (columns + 1 - game_state->current_piece.p.cols);
+    game_state->current_piece.at_col = rand() % (game_state->columns + 1 - game_state->current_piece.p.cols);
 }
 
 void block_current_piece(GameState *game_state){
@@ -117,14 +117,15 @@ void block_current_piece(GameState *game_state){
                 game_state->board[row+i][col+j] = 'X';
 }
 
-bool is_collision(char board[rows][columns], PieceInfo *piece_info){
+bool is_collision(GameState *game_state){
+    PieceInfo *piece_info = &(game_state->current_piece);
     Piece *piece = &piece_info->p;
     int p_row_size = piece->rows;
     int p_col_size = piece->cols;
     int row = piece_info->at_row;
     int col = piece_info->at_col;
 
-    if((row < 0) || (col < 0) || (row+p_row_size-1 >= rows) || (col+p_col_size-1 >= columns))
+    if((row < 0) || (col < 0) || (row+p_row_size-1 >= game_state->rows) || (col+p_col_size-1 >= game_state->columns))
     	return true; // piece is out of the grid bounds
     
     for(int i=0; i<piece->rows; ++i)
@@ -135,12 +136,12 @@ bool is_collision(char board[rows][columns], PieceInfo *piece_info){
     return false;
 }
 
-int remove_completed_lines(char board[rows][columns]){
+int remove_completed_lines(GameState *game_state){
     int lines = 0;
     bool completed_line;
-    for(int r=4; r<rows; ++r){
+    for(int r=4; r<game_state->rows; ++r){
         completed_line = true;
-        for(int c=0; c<columns; ++c){
+        for(int c=0; c<game_state->columns; ++c){
             if(board[r][c] != 'X'){
                 completed_line = false; 
                 break;
@@ -150,7 +151,7 @@ int remove_completed_lines(char board[rows][columns]){
             ++lines;
             // Move all rows above, once down
             for(int r2=r; r2>3; --r2){
-                for(int c=0; c<columns; ++c){
+                for(int c=0; c<game_state->columns; ++c){
                     board[r2][c] = board[r2-1][c];
                 }
             }
@@ -165,8 +166,8 @@ int remove_completed_lines(char board[rows][columns]){
 
 void init_game_state(GameState *game_state){
 
-for(int i = 0; i < rows; i++){
-        for(int j = 0; j < columns; j++){
+for(int i = 0; i < game_state->rows; i++){
+        for(int j = 0; j < game_state->columns; j++){
             game_state->board[i][j] = '.';
         }
     }
@@ -175,9 +176,9 @@ for(int i = 0; i < rows; i++){
 }
 
 
-bool is_terminal(char board[rows][columns]){
+bool is_terminal(GameState *game_state){
       for(int i = 0; i < 4; i++){
-        for(int j = 0; j < columns; j++){
+        for(int j = 0; j < game_state->columns; j++){
             if(board[i][j] == 'X'){
                 return true;
             }
@@ -187,8 +188,8 @@ bool is_terminal(char board[rows][columns]){
 }
 
 
-void move_piece(char board[rows][columns], PieceInfo *piece_info, int option){
-    
+void move_piece(GameState *game_state, int option){
+    PieceInfo *piece_info = &(game_state->current_piece);
     int new_col = piece_info->at_col + (option == MOVE_RIGHT) - (option == MOVE_LEFT);
     
     PieceInfo temp_piece = *piece_info;
@@ -199,8 +200,8 @@ void move_piece(char board[rows][columns], PieceInfo *piece_info, int option){
     }
 }
 
-void rotate_piece(char board[rows][columns], PieceInfo *piece_info, int option){
-
+void rotate_piece(GameState *game_state, int option){
+    PieceInfo *piece_info = &(game_state->current_piece);
     Piece temp_piece = piece_info->p;
     
     if (option == ROTATE_CW) {
