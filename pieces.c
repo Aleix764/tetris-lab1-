@@ -1,11 +1,11 @@
 #include "pieces.h"
 
 void init_piece(Piece *p){
-	p->name='_';
-    for(int i=0; i<PIECE_SIZE;++i)
-        for(int j=0;j<PIECE_SIZE;j++) 
-            p->board[i][j]='.'; 
-    p->rows=p->cols=0;
+    p->name = '-';
+    for(int i=0; i<PIECE_SIZE; ++i)
+      for(int j=0; j<PIECE_SIZE; ++j)
+        p->board[i][j] = '.';
+    p->rows = p->cols = 0;
 }
 
 void print_piece(Piece p){
@@ -42,10 +42,12 @@ void rotate_clockwise(Piece *p){
             }
         }
     }
+
+
 }
 
 void rotate_counter_clockwise(Piece *p){
-    char temp_board[PIECE_SIZE][PIECE_SIZE];
+char temp_board[PIECE_SIZE][PIECE_SIZE];
     //copiem la peça original al nou taulell, amb rotació de 90 graus
     for (int i = 0; i < p->rows; ++i){
         for (int j = 0; j < p->cols; ++j){
@@ -91,13 +93,14 @@ Piece make_I(){
 
 
 Piece make_S(){
-	 Piece piece;
+    Piece piece;
     init_piece(&piece);
     piece.name = 'S'; piece.rows = piece.cols = 3;
     piece.board[0][1] = '#'; piece.board[1][0] = '#';
     piece.board[0][2] = '#'; piece.board[1][1] = '#';
     return piece;
 }
+
 
 
 Piece make_Z(){
@@ -135,4 +138,3 @@ Piece make_T(){
     piece.board[0][1] = '#'; piece.board[1][1] = '#';
     return piece;
 }
-
