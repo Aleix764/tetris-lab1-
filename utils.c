@@ -1,16 +1,20 @@
-#ifndef _SESSION_H_
-#define _SESSION_H_ 
+#include "utils.h"
 
-#include "game.h"
+int read_int(){
+    int res, val;
+    do{
+        res = scanf("%d", &val);
+    }while(res != 1);
+    return val;
+}
 
-/// LAB 1 - data structure
-typedef struct{
-    int best_score;
-    GameState current_game_state;
-} Session;
+void read_filename(char* filename){
+    int res;
+    do{
+        res = scanf("%s", filename);
+    }while(res != 1);
+}
 
-/// LAB 1 - functions 
-void restart_session_game_state(Session *session);
-void init_session(Session *session);
-
-#endif
+int myMax(int a, int b){
+    return (a>b?a:b);
+}
