@@ -9,7 +9,8 @@
 typedef struct{
 	char name;
 	char board[PIECE_SIZE][PIECE_SIZE];
-	int cols,rows;
+	int rows, cols;
+  // ToDo in LAB 1 - define data structure
 } Piece;
 
 // Lab 1 - initialize, print, rotate and make pieces
