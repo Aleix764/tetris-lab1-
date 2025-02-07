@@ -53,6 +53,22 @@ void print_board(GameState *game_state){
     printf("\n");
 }
 
+void make_board(GameState *game_state){
+    if(game_state->board == NULL){
+        game_state->board= (char**)malloc(sizeof(char*)*game_state->rows);
+        for(int r=0;r<game_state->rows; r++){
+
+            game_state->board[r] = (char*)malloc(sizeof(char)*game_state->columns);
+        }
+    }
+    else{
+        game_state->board = (char**)realloc(game_state->board, sizeof(char*)*game_state->rows);
+        for(int r=0; r<game_state->rows; r++){
+            game_state->board[r] = (char*)malloc(sizeof(char)*game_state->columns);
+        }
+    }
+}
+
 void get_new_random_piece(GameState *game_state){
     // Random piece
     switch (rand()%MAX_NUM_PIECES){
