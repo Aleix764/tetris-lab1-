@@ -138,7 +138,7 @@ bool is_collision(GameState *game_state){
     
     for(int i=0; i<piece->rows; ++i)
         for(int j=0; j<piece->cols; ++j)
-            if((piece->board[i][j] == '#') && (board[row+i][col+j] == 'X'))
+            if((piece->board[i][j] == '#') && (game_state->board[row+i][col+j] == 'X'))
             	return true; // piece collides with another structure in the board
     
     return false;
@@ -150,7 +150,7 @@ int remove_completed_lines(GameState *game_state){
     for(int r=4; r<game_state->rows; ++r){
         completed_line = true;
         for(int c=0; c<game_state->columns; ++c){
-            if(board[r][c] != 'X'){
+            if(game_state->board[r][c] != 'X'){
                 completed_line = false; 
                 break;
             }
@@ -160,7 +160,7 @@ int remove_completed_lines(GameState *game_state){
             // Move all rows above, once down
             for(int r2=r; r2>3; --r2){
                 for(int c=0; c<game_state->columns; ++c){
-                    board[r2][c] = board[r2-1][c];
+                    game_state->board[r2][c] = game_state->board[r2-1][c];
                 }
             }
         }
@@ -187,7 +187,7 @@ for(int i = 0; i < game_state->rows; i++){
 bool is_terminal(GameState *game_state){
       for(int i = 0; i < 4; i++){
         for(int j = 0; j < game_state->columns; j++){
-            if(board[i][j] == 'X'){
+            if(game_state->board[i][j] == 'X'){
                 return true;
             }
         }
@@ -227,6 +227,9 @@ void rotate_piece(GameState *game_state, int option){
 /********************************************************/
 
 
+
+
+
 void run_turn(GameState *game_state, int option){
 	PieceInfo *p_inf = &(game_state->current_piece);
 	if(option == MOVE_LEFT || option == MOVE_RIGHT) 
@@ -248,19 +251,6 @@ void run_turn(GameState *game_state, int option){
             get_new_random_piece(game_state);
 	}
 }
-
-void set_default_game_state(GameState *game_state){
-    game_state->score=0;
-
-    for (int r = 0; r < game_state->rows; ++r) {
-            for (int c = 0; c < game_state->columns; ++c) {
-                game_state->board[r][c] = '.';
-            }
-        }
-    
-        // Obtenir nova peça
-        get_new_random_piece(game_state);
-    }
 
 void set_default_game_state(GameState *game_state){
     game_state->score=0;
