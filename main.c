@@ -93,6 +93,7 @@ void run(Session *session){
             resume_game(session);
             break;
         case EXIT:
+            free_game_state(&(session->current_game_state));
             break;
         }
     }while(option != EXIT);
