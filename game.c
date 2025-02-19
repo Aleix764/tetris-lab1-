@@ -53,6 +53,14 @@ void print_board(GameState *game_state){
     printf("\n");
 }
 
+void free_game_state(GameState *game_state){
+    if(game_state->board !=NULL){
+        for(int r=0; r<game_state->rows; r++){
+            free(game_state->board);
+        }
+    }
+}
+
 void make_board(GameState *game_state){
     if(game_state->board == NULL){
         game_state->board= (char**)malloc(sizeof(char*)*game_state->rows);
@@ -195,7 +203,7 @@ void move_piece(GameState *game_state, int option){
     PieceInfo temp_piece = *piece_info;
     temp_piece.at_col = new_col;
     
-    if (!is_collision(board, &temp_piece)) {
+    if (!is_collision(game_state)) { 
         piece_info->at_col = new_col;
     }
 }
@@ -210,7 +218,7 @@ void rotate_piece(GameState *game_state, int option){
         rotate_counter_clockwise(&temp_piece);
     }
     
-    if (!is_collision(board, &(PieceInfo){temp_piece, piece_info->at_row, piece_info->at_col})) {
+    if (!is_collision(game_state)) { 
         piece_info->p = temp_piece;
     }
 }
@@ -219,15 +227,12 @@ void rotate_piece(GameState *game_state, int option){
 /********************************************************/
 
 
-
-
-
 void run_turn(GameState *game_state, int option){
 	PieceInfo *p_inf = &(game_state->current_piece);
 	if(option == MOVE_LEFT || option == MOVE_RIGHT) 
-		move_piece(game_state->board, p_inf, option);
+		move_piece(game_state, option);
 	else if(option == ROTATE_CW || option == ROTATE_CCW)
-		rotate_piece(game_state->board, p_inf, option);
+		rotate_piece(game_state, option);
     else if(option == NONE){} // do nothing
     else{ printf("[ERROR] Invalid option %d.\n", option); exit(-3); }
 
@@ -235,11 +240,58 @@ void run_turn(GameState *game_state, int option){
     // the completed lines, aggregating them to the current score.
     // If it is not in a terminal state, add a new random piece to the board.
 	p_inf->at_row++;
-	if(is_collision(game_state->board, p_inf)){
+	if(is_collision(game_state)){
 		p_inf->at_row--;
 		block_current_piece(game_state);
-        game_state->score += remove_completed_lines(game_state->board);
+        game_state->score += remove_completed_lines(game_state);
         if(!is_terminal(game_state))
             get_new_random_piece(game_state);
 	}
 }
+
+void set_default_game_state(GameState *game_state){
+    game_state->score=0;
+
+    for (int r = 0; r < game_state->rows; ++r) {
+            for (int c = 0; c < game_state->columns; ++c) {
+                game_state->board[r][c] = '.';
+            }
+        }
+    
+        // Obtenir nova peça
+        get_new_random_piece(game_state);
+    }
+
+void set_default_game_state(GameState *game_state){
+    game_state->score=0;
+
+    for (int r = 0; r < game_state->rows; ++r) {
+            for (int c = 0; c < game_state->columns; ++c) {
+                game_state->board[r][c] = '.';
+            }
+        }
+    
+        // Obtenir nova peça
+        get_new_random_piece(game_state);
+    }
+
+
+void restart_game_state(GameState *game_state) {
+
+    printf("Enter the number of rows (minimum %d): ", MIN_ROWS);
+    game_state->rows = read_int();
+    while (game_state->rows < MIN_ROWS) {
+        printf("Rows must be at least %d. Enter again: ", MIN_ROWS);
+        game_state->rows = read_int();
+    }
+    
+    printf("Enter the number of columns (minimum %d): ", MIN_COLUMNS);
+    game_state->columns = read_int();
+    while (game_state->columns < MIN_COLUMNS) {
+        printf("Columns must be at least %d. Enter again: ", MIN_COLUMNS);
+        game_state->columns = read_int();
+    }
+
+    make_board(game_state);
+    set_default_game_state(game_state);
+    }
