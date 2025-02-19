@@ -39,9 +39,12 @@ bool is_terminal(GameState *gs); // True if contains X values in TOP-4 rows
 void move_piece(GameState *gs, int option);
 void rotate_piece(GameState *gs, int option);
 /**** LAB 1 - functions to program (end here) ****/
-void make_board(GameState *game_state),
+void make_board(GameState *game_state);
 /// Implemented functions
 void run_turn(GameState *game_state, int option);
+void free_game_state(GameState *game_state);
+void set_default_game_state(GameState *game_state);
+void restart_game_state(GameState *game_state);
 
 
 #endif
