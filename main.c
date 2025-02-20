@@ -55,6 +55,12 @@ void load_game(Session *session){
 }
 
 void resume_game(Session *session){
+    if(!is_terminal(&(session->current_game_state))){
+        run_game(session); //si no es detecta que sigui terminal, continuar on erem
+    }
+    else{
+        printf("Game state is terminal. Cannot be resumed \n");
+    }
     // ToDo in Lab 2
 }
 
