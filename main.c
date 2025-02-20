@@ -46,65 +46,6 @@ void new_game(Session *session){
     run_game(session);
 }
 
-void save_game(Session *session){
-    // ToDo in Lab 2
-}
-
-void load_game(Session *session){
-    // ToDo in Lab 2
-}
-
-void resume_game(Session *session){
-    if(!is_terminal(&(session->current_game_state))){
-        run_game(session); //si no es detecta que sigui terminal, continuar on erem
-    }
-    else{
-        printf("Game state is terminal. Cannot be resumed \n");
-    }
-    // ToDo in Lab 2
-}
-
-void print_menu(){
-    printf("Menu options:\n");
-    printf("\t1. New game.\n");  // LAB1 - basic lab for creating board, pieces and movements
-                                 // LAB1 - extend game with GameState data structure, current score, best score
-                                 //      - also add standard (4x4) with a posible extension, read board from command line  
-    printf("\t2. Save game.\n"); // LAB2 - Writing file
-    printf("\t3. Load game.\n"); // LAB2 - Reading file
-    printf("\t4. Resume game.\n"); // LAB2 - Continue game after reading file
-    printf("\t5. Exit.\n");  // Free all reserved memory!
-}
-
-
-void run(Session *session){
-    int option;
-    do{
-        print_menu();
-        do{
-            printf("Enter an integer (%d-%d): ", NEW_GAME, EXIT);
-            option = read_int();
-        }while(option < NEW_GAME || option > EXIT);
-
-        switch (option){
-        case NEW_GAME:
-            new_game(session);
-            break;
-        case SAVE_GAME:
-            save_game(session);
-            break;
-        case LOAD_GAME:
-            load_game(session);
-            break;
-        case RESUME_GAME:
-            resume_game(session);
-            break;
-        case EXIT:
-            free_game_state(&(session->current_game_state));
-            break;
-        }
-    }while(option != EXIT);
-}
-
 void save_game(Session *session) {
     char filename[100];
     printf("Enter filename to save game: ");
@@ -210,6 +151,57 @@ void load_game(Session *session) {
 
     fclose(file);
     printf("Game loaded successfully from %s\n", filename);
+}
+
+void resume_game(Session *session){
+    if(!is_terminal(&(session->current_game_state))){
+        run_game(session); //si no es detecta que sigui terminal, continuar on erem
+    }
+    else{
+        printf("Game state is terminal. Cannot be resumed \n");
+    }
+    // ToDo in Lab 2
+}
+
+void print_menu(){
+    printf("Menu options:\n");
+    printf("\t1. New game.\n");  // LAB1 - basic lab for creating board, pieces and movements
+                                 // LAB1 - extend game with GameState data structure, current score, best score
+                                 //      - also add standard (4x4) with a posible extension, read board from command line  
+    printf("\t2. Save game.\n"); // LAB2 - Writing file
+    printf("\t3. Load game.\n"); // LAB2 - Reading file
+    printf("\t4. Resume game.\n"); // LAB2 - Continue game after reading file
+    printf("\t5. Exit.\n");  // Free all reserved memory!
+}
+
+
+void run(Session *session){
+    int option;
+    do{
+        print_menu();
+        do{
+            printf("Enter an integer (%d-%d): ", NEW_GAME, EXIT);
+            option = read_int();
+        }while(option < NEW_GAME || option > EXIT);
+
+        switch (option){
+        case NEW_GAME:
+            new_game(session);
+            break;
+        case SAVE_GAME:
+            save_game(session);
+            break;
+        case LOAD_GAME:
+            load_game(session);
+            break;
+        case RESUME_GAME:
+            resume_game(session);
+            break;
+        case EXIT:
+            free_game_state(&(session->current_game_state));
+            break;
+        }
+    }while(option != EXIT);
 }
 
 int main(){
