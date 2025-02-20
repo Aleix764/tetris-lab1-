@@ -59,6 +59,9 @@ void free_game_state(GameState *game_state){
             free(game_state->board);
         }
     }
+	
+    free(game_state->board);
+    game_state->board=NULL; 
 }
 
 void make_board(GameState *game_state){
@@ -173,14 +176,11 @@ int remove_completed_lines(GameState *game_state){
 /********************************************************/
 
 void init_game_state(GameState *game_state){
-
-for(int i = 0; i < game_state->rows; i++){
-        for(int j = 0; j < game_state->columns; j++){
-            game_state->board[i][j] = '.';
-        }
-    }
-    game_state->score = 0;
-    get_new_random_piece(game_state);
+    game_state->board = NULL; // board a null
+    game_state->rows = MIN_ROWS; 
+    game_state->columns = MIN_COLUMNS;
+    make_board(game_state); // Assigna memoria al board.
+    set_default_game_state(game_state);
 }
 
 
