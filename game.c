@@ -197,29 +197,46 @@ bool is_terminal(GameState *game_state){
 
 
 void move_piece(GameState *game_state, int option){
+    if (game_state == NULL) {
+        return; 
+    }
     PieceInfo *piece_info = &(game_state->current_piece);
     int new_col = piece_info->at_col + (option == MOVE_RIGHT) - (option == MOVE_LEFT);
-    
+    if (new_col < 0 || new_col + piece_info->p.cols > game_state->columns) {
+        return; // No moure la peça si està fora dels limits
+    }
+
     PieceInfo temp_piece = *piece_info;
-    temp_piece.at_col = new_col;
-    
-    if (!is_collision(game_state)) { 
-        piece_info->at_col = new_col;
+    temp_piece.at_col = new_col; 
+    if (!is_collision(game_state)) {
+        piece_info->at_col = new_col; 
     }
 }
 
 void rotate_piece(GameState *game_state, int option){
+    if (game_state == NULL) {
+        return; 
+    }
+
     PieceInfo *piece_info = &(game_state->current_piece);
     Piece temp_piece = piece_info->p;
-    
     if (option == ROTATE_CW) {
         rotate_clockwise(&temp_piece);
     } else if (option == ROTATE_CCW) {
         rotate_counter_clockwise(&temp_piece);
+    } else {
+        return; 
     }
-    
-    if (!is_collision(game_state)) { 
-        piece_info->p = temp_piece;
+
+    if (piece_info->at_col + temp_piece.cols > game_state->columns ||
+        piece_info->at_row + temp_piece.rows > game_state->rows) {
+        return; // No rotar si anem fora els límits
+    }
+
+    PieceInfo temp_piece_info = *piece_info;
+    temp_piece_info.p = temp_piece;
+    if (!is_collision(game_state)) {
+        piece_info->p = temp_piece; 
     }
 }
 /********************************************************/
