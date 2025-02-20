@@ -105,6 +105,113 @@ void run(Session *session){
     }while(option != EXIT);
 }
 
+void save_game(Session *session) {
+    char filename[100];
+    printf("Enter filename to save game: ");
+    scanf("%99s", filename);  // Read filename from user
+
+    FILE *file = fopen(filename, "w");
+    if (!file) {
+        perror("Error opening file");
+        return;
+    }
+
+    GameState *game = &session->current_game_state;
+    PieceInfo *piece = &game->current_piece;
+
+    // Write score
+    fprintf(file, "Score: %d\n\n", game->score);
+
+    // Write PieceInfo
+    fprintf(file, "PieceInfo:\n");
+    fprintf(file, "at_row: %d\n", piece->at_row);
+    fprintf(file, "at_col: %d\n", piece->at_col);
+    fprintf(file, "name: %c\n", piece->p.name);
+    fprintf(file, "rows: %d\n", piece->p.rows);
+    fprintf(file, "cols: %d\n", piece->p.cols);
+
+    // Print piece shape
+    for (int i = 0; i < piece->p.rows; i++) {
+        for (int j = 0; j < piece->p.cols; j++) {
+            fprintf(file, "%c", piece->p.board[i][j]);
+        }
+        fprintf(file, "\n");
+    }
+    fprintf(file, "\n");
+
+    // Write board info
+    fprintf(file, "Board:\n");
+    fprintf(file, "rows: %d\n", game->rows);
+    fprintf(file, "cols: %d\n", game->columns);
+
+    for (int i = 0; i < game->rows; i++) {
+        for (int j = 0; j < game->columns; j++) {
+            char cell = game->board[i][j];
+
+            // Ensure we don’t print the current piece on the board
+            if (i >= piece->at_row && i < piece->at_row + piece->p.rows &&
+                j >= piece->at_col && j < piece->at_col + piece->p.cols) {
+                if (piece->p.board[i - piece->at_row][j - piece->at_col] != '.') {
+                    cell = '.';  // Replace piece cells with empty space
+                }
+            }
+
+            fprintf(file, "%c", cell);
+        }
+        fprintf(file, "\n");
+    }
+
+    fclose(file);
+    printf("Game saved successfully to %s\n", filename);
+}
+
+void load_game(Session *session) {
+    char filename[100];
+    printf("Enter filename to load game: ");
+    scanf("%99s", filename);  // Read filename from user
+
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Error opening file");
+        return;
+    }
+
+    GameState *game = &session->current_game_state;
+    PieceInfo *piece = &game->current_piece;
+
+    // Read score
+    fscanf(file, "Score: %d\n\n", &game->score);
+
+    // Read PieceInfo
+    fscanf(file, "PieceInfo:\n");
+    fscanf(file, "at_row: %d\n", &piece->at_row);
+    fscanf(file, "at_col: %d\n", &piece->at_col);
+    fscanf(file, "name: %c\n", &piece->p.name);
+    fscanf(file, "rows: %d\n", &piece->p.rows);
+    fscanf(file, "cols: %d\n", &piece->p.cols);
+
+    // Read the piece shape
+    for (int i = 0; i < piece->p.rows; i++) {
+        fscanf(file, "%s", piece->p.board[i]);  // Read row as string
+    }
+
+    // Read board dimensions
+    fscanf(file, "\nBoard:\n");
+    fscanf(file, "rows: %d\n", &game->rows);
+    fscanf(file, "cols: %d\n", &game->columns);
+
+    // Allocate board memory
+    make_board(game);
+
+    // Read the board content
+    for (int i = 0; i < game->rows; i++) {
+        fscanf(file, "%s", game->board[i]);
+    }
+
+    fclose(file);
+    printf("Game loaded successfully from %s\n", filename);
+}
+
 int main(){
     Session session;
     init_session(&session);
