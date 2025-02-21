@@ -302,3 +302,30 @@ void restart_game_state(GameState *game_state) {
     make_board(game_state);
     set_default_game_state(game_state);
     }
+
+GameState copy(GameState *game_state){
+    GameState copy;
+    if(game_state==NULL){ //if we have an invalid state we return it null or at 0
+        copy.board=NULL;
+        copy.score=0;
+        copy.rows=0;
+        copy.columns=0;
+        return copy;
+    }
+
+    copy.score=game_state->score;
+    copy.rows=game_state->rows;
+    copy.columns=game_state->columns;
+    copy.current_piece=game_state->current_piece; //copy actual piece
+
+    copy.board=(char**)malloc(copy.rows *(sizeof(char))); //copy board dynamic
+    for(int i=0; i<copy.rows; i++){
+        copy.board[i]=(char *)malloc(copy.columns *(sizeof(char)));
+        for(int j=0; j<copy.columns; j++){
+            copy.board[i][j]=game_state->board[i][j];
+        }
+    } 
+
+    return copy;
+
+}
