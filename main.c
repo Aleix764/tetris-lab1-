@@ -24,6 +24,8 @@ void run_game(Session *session){
         // 3.b Show best move
         if(game_option == SHOW_BEST_MOVE){
             // ToDo in Lab 3
+            int best_move = show_best_move(game_state);
+            printf("Best move is %d.\n",best_move);
             continue;
         }
 
