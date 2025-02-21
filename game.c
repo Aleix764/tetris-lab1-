@@ -247,7 +247,7 @@ void rotate_piece(GameState *game_state, int option){
 
 
 
-void run_turn(GameState *game_state, int option){
+bool run_turn(GameState *game_state, int option){
 	PieceInfo *p_inf = &(game_state->current_piece);
 	if(option == MOVE_LEFT || option == MOVE_RIGHT) 
 		move_piece(game_state, option);
@@ -259,15 +259,20 @@ void run_turn(GameState *game_state, int option){
 	// Move down if possible, otherwise block the piece and remove
     // the completed lines, aggregating them to the current score.
     // If it is not in a terminal state, add a new random piece to the board.
-	p_inf->at_row++;
+    bool last_move=false;
+    p_inf->at_row++;
 	if(is_collision(game_state)){
+        return true;
 		p_inf->at_row--;
 		block_current_piece(game_state);
         game_state->score += remove_completed_lines(game_state);
         if(!is_terminal(game_state))
             get_new_random_piece(game_state);
 	}
+
+    return last_move;
 }
+
 
 void set_default_game_state(GameState *game_state){
     game_state->score=0;
