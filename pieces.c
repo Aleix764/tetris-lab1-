@@ -95,7 +95,7 @@ Piece make_I(){
 Piece make_S(){
     Piece piece;
     init_piece(&piece);
-    piece.name = 'S'; piece.rows = piece.cols = 3;
+    piece.name = 'S'; piece.rows =2; piece.cols = 3;
     piece.board[0][1] = '#'; piece.board[1][0] = '#';
     piece.board[0][2] = '#'; piece.board[1][1] = '#';
     return piece;
@@ -106,7 +106,7 @@ Piece make_S(){
 Piece make_Z(){
     Piece piece;
     init_piece(&piece);
-    piece.name = 'Z'; piece.rows = piece.cols = 3;
+    piece.name = 'Z'; piece.rows =2; piece.cols = 3;
     piece.board[0][0] = '#'; piece.board[0][1] = '#';
     piece.board[1][2] = '#'; piece.board[1][1] = '#';
     return piece;
