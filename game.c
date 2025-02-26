@@ -357,4 +357,30 @@ int recursive_best_score(GameState *game_state, int depth){
 
     return best_score;
 }
-    
+
+int show_best_move(GameState *game_state){
+    int best_score=game_state->score;
+    int best_move=NONE;
+    int options[5]={MOVE_LEFT, MOVE_RIGHT, ROTATE_CW, ROTATE_CCW, NONE};
+    int num_options=sizeof(options);
+    for(int i=0; i<num_options; i++){
+        GameState copied_state= copy(game_state);
+                // turn on copy with actual option
+                run_turn(&copied_state, options[i]);
+
+                // check score of the actual turn
+                int current_score = recursive_best_score(&copied_state, 0);
+        
+                // change if actual score is higher
+                if (current_score > best_score) {
+                    best_score = current_score;
+                    best_move = options[i];
+                }
+        
+                // free memory
+                free_game_state(&copied_state);
+            }
+        
+            // return the move
+            return best_move;
+        }
