@@ -45,6 +45,8 @@ void run_turn(GameState *game_state, int option);
 void free_game_state(GameState *game_state);
 void set_default_game_state(GameState *game_state);
 void restart_game_state(GameState *game_state);
+int recursive_best_score(GameState *game_state, int depth);
+GameState copy(GameState *game_state);
 
 
 #endif
