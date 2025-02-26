@@ -334,3 +334,27 @@ GameState copy(GameState *game_state){
     return copy;
 
 }
+
+
+int recursive_best_score(GameState *game_state, int depth){
+    if(depth>=MAX_DEPTH || is_terminal(game_state)){
+        return game_state->score;
+    }
+    int options[]={MOVE_LEFT, MOVE_RIGHT, ROTATE_CW, ROTATE_CCW, NONE}; 
+    int score=game_state->score;
+    int best_score=score;
+    for(int i =0; i<sizeof(options); i++){
+        GameState copied_state= copy(game_state);
+        run_turn(&copied_state, options[i]); //iterate through all the options 
+        int current_score = recursive_best_score(&copied_state, depth + 1);
+        if (current_score > best_score) { //change best score if needed
+            best_score = current_score;
+        }
+
+        // Free memory ocupied by the copy
+        free_game_state(&copied_state);
+    }
+
+    return best_score;
+}
+    
